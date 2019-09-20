@@ -1,10 +1,12 @@
 var express = require("express");
 const bodyParser = require('body-parser');
-	
+cors = require('cors')
+
 var app = express();
 var port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+app.use(cors());
 
 var recording = [];
 
