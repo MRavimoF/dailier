@@ -54,7 +54,7 @@ def main():
         text = client.recognize(language_code=args.language)
 
         if text is None:
-            logging.info('You said nothing.')
+            print('You said nothing.')
         else:
             print(text.lower())
 
