@@ -1,0 +1,33 @@
+<html>
+<head>
+	</head>
+	<body>
+
+	<div id="transcript"/>
+
+
+	</body>
+
+
+<script>
+setTimeout(function(){ update(); }, 200);
+
+function update() {
+
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    var myObj = JSON.parse(this.responseText);
+    document.getElementById("transcript").innerHTML = 
+		  '<ul>' +
+		  myObj.sentences.map(it => `<li>${it}</li>`).join('') +
+		  '</ul>';
+  }
+};
+xmlhttp.open("GET", "https://dailier.herokuapp.com/transcript", true);
+xmlhttp.send();
+setTimeout(function(){ update(); }, 500);
+
+}
+</script>
+	</html>
