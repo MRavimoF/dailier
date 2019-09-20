@@ -8,15 +8,15 @@ import locale
 from aiy.board import Board, Led
 from aiy.cloudspeech import CloudSpeechClient
 
+def locale_language():
+    language, _ = locale.getdefaultlocale()
+    return language
+
 engine = pyttsx3.init()
 client = CloudSpeechClient()
 parser = argparse.ArgumentParser(description='Assistant service example.')
 parser.add_argument('--language', default=locale_language())
 args = parser.parse_args()
-
-def locale_language():
-    language, _ = locale.getdefaultlocale()
-    return language
 
 def onBoxTalkStart(name):
     print ('intro', name)
