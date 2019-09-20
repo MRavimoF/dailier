@@ -7,32 +7,49 @@
 		</head>
 	<body>
 
-		<h1>Transcript so far:</h1>
-	<div id="transcript"/>
+		<h1>Daily participants:</h1>
+		<div id="participants"></div>
 
+		<h1>Transcript so far:</h1>
+		<div id="transcript"></div>
 
 	</body>
 
 
 <script>
-setTimeout(function(){ update(); }, 200);
+setTimeout(function(){ update(); },200);
 
 function update() {
 
-var xmlhttp = new XMLHttpRequest();
-xmlhttp.onreadystatechange = function() {
-  if (this.readyState == 4 && this.status == 200) {
-    var myObj = JSON.parse(this.responseText);
-    document.getElementById("transcript").innerHTML = 
+	getData("transcript", (data) =>
+		{
+			document.getElementById("transcript").innerHTML = 
 		  '<ul>' +
-		  myObj.sentences.map(it => `<li>${it}</li>`).join('') +
+		  data.sentences.map(it => `<li>${it}</li>`).join('') +
 		  '</ul>';
-  }
-};
-xmlhttp.open("GET", "https://dailier.herokuapp.com/transcript", true);
-xmlhttp.send();
-setTimeout(function(){ update(); }, 500);
+		});
 
+	getData("participants", (data) =>
+		{
+			document.getElementById("participants").innerHTML = 
+		  '<ul>' +
+		  data.participants.map(it => `<li>${it}</li>`).join('') +
+		  '</ul>';
+		});
+	setTimeout(function(){ update(); }, 200);
 }
+
+function getData(resource, oncomplete) {
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+  	if (this.readyState == 4 && this.status == 200) {
+    		var myObj = JSON.parse(this.responseText);
+		oncomplete(myObj);
+  	}
+	};
+	xmlhttp.open("GET", "https://dailier.herokuapp.com/" + resource, true);
+	xmlhttp.send();
+}
+
 </script>
 	</html>

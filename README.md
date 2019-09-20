@@ -60,7 +60,7 @@ curl -X GET \
 	}'
 ```
 
-# The client
+# The admin interface
 For debugging and administration there is a web interface for the system availabla at:
 https://quirky-meitner-255d4f.netlify.com/
 
