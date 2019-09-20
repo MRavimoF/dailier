@@ -47,8 +47,8 @@ def main():
     parser.add_argument('--language', default=locale_language())
     args = parser.parse_args()
 
-    engine.connect('started-utterance', onStart)
-    engine.connect('finished-utterance', onEnd)
+    engine.connect('started-utterance', onBoxTalkStart)
+    engine.connect('finished-utterance', onBoxTalkEnd)
 
     with Board() as board:
         print('PRESS BUTTON TO START APP')
