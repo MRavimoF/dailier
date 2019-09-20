@@ -9,6 +9,7 @@ Found under `/server` is a node REST service. Start with `node index.js`
 Available endpoints:
 
 ## Start the daily
+Request:
 ```
 curl -X POST \
   https://dailier.herokuapp.com/actions \
@@ -17,6 +18,26 @@ curl -X POST \
 	"action": "start"
 }'
 ```
+
+The response:
+```
+{
+    "actions": [
+        {
+            "type": "SAY",
+            "payload": "The text say outloud"
+        },
+        {
+            "type": "RECORD",
+            "payload": "participants"
+        }
+    ]
+}
+```
+So this should be interpreted as follows on DailyBox:
+1. Say the message
+2. Start recording
+3. Send recorded text to endpoint `POST /participants` (determined by the original response)
 
 ## Add participants
 ```
