@@ -28,7 +28,7 @@ def talkToBrains(target, payload):
 def processAction(action, board):
     if action['type'] == 'SAY':
         board.led.state = Led.ON
-        engine.say(action['payload'])
+        engine.say(action['payload'], action['type'])
         engine.startLoop()
     elif action['type'] == 'RECORD':
         board.led.state = Led.BLINK
