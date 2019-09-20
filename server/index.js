@@ -2,6 +2,7 @@ var express = require("express");
 const bodyParser = require('body-parser');
 	
 var app = express();
+var port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
@@ -10,8 +11,8 @@ app.post("/actions", (req, res, next) => {
 	res.json(respond('Good day. My name is Lucy and I will be guiding you through your daily standup.'));
 });
 
-app.listen(3000, () => {
- console.log("Server running on port 3000");
+app.listen(port, () => {
+ console.log("Server running on port " + port);
 });
 
 
