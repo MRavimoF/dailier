@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 var recording = [];
+var participants = [];
 
 app.post("/actions", (req, res, next) => {
 	const command = req.body;
@@ -29,13 +30,26 @@ app.post("/actions", (req, res, next) => {
 
 });
 
-app.get("/transcript", (req, res, next) => {
 
+app.get("/transcript", (req, res, next) => {
 	const sentences = recording;
 	res.json({
 		sentences: sentences
 	});
+});
 
+app.post("/participants", (req, res, next) => { 
+	const command = req.body;
+
+	const combined = participants.concat(command.payload.split(" "));
+	participants = Array.from(new Set(combined));
+	res.json(ackResponse());
+});
+
+app.get("/participants", (req, res, next) => {
+	res.json({
+		participants: participants
+	});
 });
 
 app.listen(port, () => {
@@ -45,7 +59,7 @@ app.listen(port, () => {
 function ackResponse() {
 	return {
 		action: "ACK",
-		payload: "received text"
+		payload: "received command"
 	}
 }
 
