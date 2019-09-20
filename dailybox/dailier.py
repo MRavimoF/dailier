@@ -9,6 +9,10 @@ from aiy.board import Board, Led
 from aiy.cloudspeech import CloudSpeechClient
 
 engine = pyttsx3.init()
+client = CloudSpeechClient()
+parser = argparse.ArgumentParser(description='Assistant service example.')
+parser.add_argument('--language', default=locale_language())
+args = parser.parse_args()
 
 def locale_language():
     language, _ = locale.getdefaultlocale()
@@ -41,11 +45,6 @@ def processAction(action, board):
             talkToBrains(action['payload'], { 'payload': text })
 
 def main():
-
-    client = CloudSpeechClient()
-    parser = argparse.ArgumentParser(description='Assistant service example.')
-    parser.add_argument('--language', default=locale_language())
-    args = parser.parse_args()
 
     engine.connect('started-utterance', onBoxTalkStart)
     engine.connect('finished-utterance', onBoxTalkEnd)
