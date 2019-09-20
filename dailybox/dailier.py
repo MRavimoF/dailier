@@ -2,42 +2,61 @@
 
 import requests
 import pyttsx3
+import argparse
+import locale
 
 from aiy.board import Board, Led
-from aiy.voice import tts
+from aiy.cloudspeech import CloudSpeechClient
 
-engine = pyttsx3.init()
+def locale_language():
+    language, _ = locale.getdefaultlocale()
+    return language
 
-def onStart(name):
-    print ('intro', name)
-
-def onEnd(name, completed):
-    print ('finishing', name, completed)
-    engine.endLoop()
-
-def talkToBrains(target, payload):
-    response = requests.post('https://dailier.herokuapp.com/'+target, json = payload)
-    return response.json()
-
-def processAction(action, board):
-    if action['type'] == 'SAY':
-        board.led.state = Led.ON
-        engine.say(action['payload'])
-        engine.startLoop()
-    elif action['type'] == 'RECORD':
-        board.led.state = Led.BLINK
 
 def main():
 
+    client = CloudSpeechClient()
+    parser = argparse.ArgumentParser(description='Assistant service example.')
+    parser.add_argument('--language', default=locale_language())
+    args = parser.parse_args()
+
+    engine = pyttsx3.init()
+
+    def onStart(name):
+        print ('intro', name)
+
+    def onEnd(name, completed):
+        print ('finishing', name, completed)
+        if name == 'intro':
+            engine.endLoop()
+        elif name == 'end':
+            engine.endLoop()
+
+    engine = pyttsx3.init()
     engine.connect('started-utterance', onStart)
     engine.connect('finished-utterance', onEnd)
 
     with Board() as board:
+        print('PRESS BUTTON TO START APP')
         board.button.wait_for_press()
         print('START THE APP')
-        content = talkToBrains('actions', { "action": "start" })
-        for action in content['actions']:
-            processAction(action, board)
+        response = requests.post('https://dailier.herokuapp.com/actions', json = { "action": "start" })
+        content = response.json()
+        print(response.content)
+        board.led.state = Led.BLINK
+        engine.say(content['actions'][0]['payload'],'intro')
+        board.led.state = Led.ON
+        engine.startLoop()
+        
+        # RECORD
+        board.led.state = Led.BLINK
+
+        text = client.recognize(language_code=args.language)
+
+        if text is None:
+            logging.info('You said nothing.')
+        else:
+            print(text.lower())
 
         board.button.wait_for_release()
         print('OFF')
