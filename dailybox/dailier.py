@@ -23,7 +23,8 @@ def onBoxTalkStart(name):
 
 def onBoxTalkEnd(name, completed):
     print ('finishing', name, completed)
-    engine.endLoop()
+    #if(name == "SAY"):
+    #    engine.endLoop()
 
 def talkToBrains(target, payload):
     response = requests.post('https://dailier.herokuapp.com/'+target, json = payload)
@@ -33,8 +34,11 @@ def processAction(action, board):
     if action['type'] == 'SAY':
         board.led.state = Led.ON
         engine.say(action['payload'], action['type'])
-        engine.startLoop()
+        engine.runAndWait()
+        while engine.isBusy():
+            print("talking")
     elif action['type'] == 'RECORD':
+        print("START RECORDING")
         board.led.state = Led.BLINK
         text = client.recognize(language_code=args.language)
 
