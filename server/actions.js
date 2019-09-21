@@ -16,13 +16,26 @@ function ackAction() {
  * a record action for it or ACK action if all done
  */
 function dailyReportAction(reportByParticipant) {
-
   for(let i = 0; i < reportByParticipant.length; i++){
     const report = reportByParticipant[i];
     if(!report.yesterday)
       return [
         sayAction(`So ${report.participant}, what did you do yesterday?`),
         recordAction(`/participants/${report.participant}/report/yesterday`)
+      ];
+
+
+    if(!report.today)
+      return [
+        sayAction(`So ${report.participant}, what are you planning to do today?`),
+        recordAction(`/participants/${report.participant}/report/today`)
+      ];
+
+
+    if(!report.blockers)
+      return [
+        sayAction(`So ${report.participant}, do you have any blockers?`),
+        recordAction(`/participants/${report.participant}/report/blockers`)
       ];
   }
 

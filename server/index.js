@@ -97,8 +97,9 @@ app.get("/participants", (req, res, next) => {
 	});
 });
 
-app.post("/participants/:name/report/yesterday", (req, res, next) => {
+app.post("/participants/:name/report/:topic", (req, res, next) => {
 	const participant = req.params.name;
+	const topic = req.params.topic;
 	const command = req.body;
 
 	var report = dailyReports.find(it => it.participant === participant);
@@ -107,8 +108,10 @@ app.post("/participants/:name/report/yesterday", (req, res, next) => {
 		dailyReports.push(report);
 	}
 
-	report.yesterday = command.data;
-	respondActions(res, actions.ackAction());
+	report[topic] = command.data;
+	respondActions(res, [
+			actions.dailyReportAction(dailyReports)
+	]);
 });
 
 app.listen(port, () => {
