@@ -56,7 +56,6 @@
 
 	function update() {
 		getData("daily", data => {
-			console.log(data)
 			document.getElementById("transcript").innerHTML =
 				data.report
 					.map(i => `<tr>${i.participant}<td></td><td>${i.yesterday}</td><td>${i.today}</td><td>${i.blockers}</td></tr>`)
