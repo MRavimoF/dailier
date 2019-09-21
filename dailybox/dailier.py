@@ -48,6 +48,10 @@ def recordUntilKeyword(board):
     print("STOP RECORDING")
     return ' '.join(collected)
 
+def processActions(response, board):
+    for action in response['actions']:
+        processAction(action, board)
+
 def processAction(action, board):
     if action['type'] == 'SAY':
         board.led.state = Led.ON
@@ -57,7 +61,8 @@ def processAction(action, board):
             print("talking")
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
-        talkToBrains(action['callback'], { 'data': text })
+        newActions = talkToBrains(action['callback'], { 'data': text })
+        processActions(newActions)
 
 def main():
 
@@ -68,9 +73,8 @@ def main():
         print('PRESS BUTTON TO START APP')
         board.button.wait_for_press()
         print('START THE APP')
-        content = talkToBrains('actions', { "action": "start" })
-        for action in content['actions']:
-            processAction(action, board)
+        response = talkToBrains('actions', { "action": "start" })
+        processActions(response, board)
 
         board.button.wait_for_release()
         print('OFF')
