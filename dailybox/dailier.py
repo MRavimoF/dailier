@@ -76,7 +76,7 @@ def main():
         print('PRESS BUTTON TO START APP')
         board.button.wait_for_press()
         print('START THE APP')
-        response = talkToBrains('actions', { "action": "start" })
+        response = talkToBrains('/actions', { "action": "start" })
         processActions(response, board)
 
         board.button.wait_for_release()
