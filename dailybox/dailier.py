@@ -31,7 +31,7 @@ def talkToBrains(target, payload):
     print('POST ' + url)
     response = requests.post(url, json = payload)
     print('Received response: ' + response.text)
-    return response.json()
+    return response.json()['actions']
 
 def recordUntilKeyword(board):
     print("START RECORDING")
@@ -47,12 +47,17 @@ def recordUntilKeyword(board):
             sanitized = text.lower()
             loop = sanitized.find('peacock') == -1
             collected.append(sanitized.replace('peacock',''))
+            board.button.when_pressed = exitRecording
     board.led.state = Led.OFF
     print("STOP RECORDING")
     return ' '.join(collected)
 
-def processActions(response, board):
-    for action in response['actions']:
+def exitRecording():
+    print("exiting")
+    return False
+
+def processActions(actions, board):
+    for action in actions:
         processAction(action, board)
 
 def processAction(action, board):
@@ -61,7 +66,7 @@ def processAction(action, board):
         engine.say(action['data'], action['type'])
         engine.runAndWait()
         while engine.isBusy():
-            print("talking")
+            print("talking too long")
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
         newActions = talkToBrains(action['callback'], { 'data': text })
@@ -76,8 +81,8 @@ def main():
         print('PRESS BUTTON TO START APP')
         board.button.wait_for_press()
         print('START THE APP')
-        response = talkToBrains('/actions', { "action": "start" })
-        processActions(response, board)
+        actions = talkToBrains('/actions', { "action": "start" })
+        processActions(actions, board)
 
         board.button.wait_for_release()
         print('OFF')
