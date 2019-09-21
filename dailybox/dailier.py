@@ -31,7 +31,7 @@ def talkToBrains(target, payload):
     print('POST ' + url)
     response = requests.post(url, json = payload)
     print('Received response: ' + response.text)
-    return response.json()
+    return response.json()['actions']
 
 def recordUntilKeyword(board):
     print("START RECORDING")
@@ -51,8 +51,8 @@ def recordUntilKeyword(board):
     print("STOP RECORDING")
     return ' '.join(collected)
 
-def processActions(response, board):
-    for action in response['actions']:
+def processActions(actions, board):
+    for action in actions:
         processAction(action, board)
 
 def processAction(action, board):
@@ -76,8 +76,8 @@ def main():
         print('PRESS BUTTON TO START APP')
         board.button.wait_for_press()
         print('START THE APP')
-        response = talkToBrains('/actions', { "action": "start" })
-        processActions(response, board)
+        actions = talkToBrains('/actions', { "action": "start" })
+        processActions(actions, board)
 
         board.button.wait_for_release()
         print('OFF')
