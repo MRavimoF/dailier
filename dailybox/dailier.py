@@ -5,6 +5,7 @@ import pyttsx3
 import argparse
 import locale
 import time
+import datetime
 
 from aiy.board import Board, Led
 from aiy.cloudspeech import CloudSpeechClient
@@ -38,6 +39,7 @@ def talkToBrains(target, payload):
 def recordUntilKeyword(board):
     global loop
     print("START RECORDING")
+    startTime = datetime.datetime.now(datetime.timezone.utc)
     board.led.state = Led.BLINK
     board.button.when_pressed = quitRecording
     collected = []
@@ -57,7 +59,9 @@ def recordUntilKeyword(board):
     board.led.state = Led.OFF
     board.button.when_pressed = None
     print("STOP RECORDING")
-    return ' '.join(collected)
+    data = {"text": " ".join(collected), "startAt": startTime, "endAt": datetime.datetime.now(datetime.timezone.utc)}
+    print("DATA", data)
+    return data
 
 def quitRecording():
     global loop
@@ -77,8 +81,8 @@ def processAction(action, board):
         while engine.isBusy():
             time.sleep(0.1)
     elif action['type'] == 'RECORD':
-        text = recordUntilKeyword(board)
-        newActions = talkToBrains(action['callback'], { 'data': text })
+        recording = recordUntilKeyword(board)
+        newActions = talkToBrains(action['callback'], { 'data': recording })
         processActions(newActions, board)
 
 def main():
