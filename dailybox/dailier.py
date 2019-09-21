@@ -47,10 +47,13 @@ def recordUntilKeyword(board):
             sanitized = text.lower()
             loop = sanitized.find('peacock') == -1
             collected.append(sanitized.replace('peacock',''))
-            board.button.when_pressed = print('test')
+            board.button.when_pressed = exitRecording
     board.led.state = Led.OFF
     print("STOP RECORDING")
     return ' '.join(collected)
+
+def exitRecording():
+    return False
 
 def processActions(actions, board):
     for action in actions:
