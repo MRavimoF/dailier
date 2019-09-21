@@ -1,21 +1,38 @@
 <html>
 
 <head>
+	<title>Dailier Meeting</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 	<style>
+		html, body {
+			background: #ffba00;
+			color: #414141;
+		}
 		#participants span {
 			padding: 0.5rem;
 			margin-bottom: 0.5rem;
 		}
+		td, th, tbody {
+			background: none;
+			border: none;
+		}
+		tbody tr:nth-child(even) {
+			background-color: #414141;
+
+			color: #ffcb00;
+		}
 	</style>
-	<title>Dailier Meeting</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css" />
 </head>
 
 <body>
 
 	
+<img src="images/dailier-logo.png" alt="" style="max-height:150px;">
 
-	<ul class="menu" id="participants">Loading...</ul>
+<h1 id="whosturnisit"></h1>
+
+	<ul class="menu align-center" id="participants">Loading...</ul>
 
 	<table>
 		<tbody id="transcript"> </tbody>
@@ -31,6 +48,31 @@
 		update();
 	}, reloadDelay);
 
+	const diffTimeInSeconds = (a, b) => {
+		mA = moment(a)
+		mB = moment(b)
+		return mB.diff(mA, 'seconds')
+	}
+	const maxTime = 30
+
+	const timeDisplay = (time) => `
+		<div class="${time < maxTime ? 'success' : 'alert'} progress" style="width:50%">
+			<span class=" ${time < maxTime ? 'success' : 'alert'} progress-meter" style="width: ${time / maxTime * 100}%">
+				<p class="progress-meter-text">${time} Seconds</p>
+			</span>
+		</div>
+		`
+
+	const displayTimeIfExists = (obj) => obj && obj.startAt && obj.endAt && timeDisplay(diffTimeInSeconds(obj.startAt, obj.endAt))
+
+	const textOrEllipsis = obj => obj && obj.text ? obj.text : '...'
+
+	const textBlock = (label, obj) => `
+		<p><strong>${label}</strong></p>
+		${displayTimeIfExists(obj)}
+	<p>${textOrEllipsis(obj)}</p>
+	`
+
 	function update() {
 		getData("daily", data => {
 			document.getElementById("transcript").innerHTML =
@@ -38,18 +80,12 @@
 					.map(i => `
 									<tr>
 										<td>
-											<span class="float-right label">${i.participant}</span>
+											<span class="float-right label secondary">${i.participant}</span>
 
-											<p><strong>Yesterday</strong></p>
-											<p>${i.yesterday && i.yesterday.text ? i.yesterday.text : '...'}</p>
-											<hr/>
+											${textBlock('Yesterday', i.yesterday)}
+											${textBlock('Today', i.today)}
+											${textBlock('Blockers', i.blockers)}
 
-											<p><strong>Today</strong></p>
-											<p>${i.today && i.today.text ? i.today.text : '...'}</p>
-											<hr/>
-											
-											<p><strong>Blockers</strong></p>
-											<p>${i.blockers && i.blockers.text ? i.blockers.text : '...'}</p>
 											</td>
 										</tr>
 								`)
@@ -62,6 +98,12 @@
 					.map(it => `<li><span class="label secondary">${it}</span></li> `)
 					.join("") || "no participants"
 		});
+
+		getData("whosturnisit", data => {
+			document.getElementById("whosturnisit").innerHTML = data.currentPerson ? data.currentPerson + ' turn' : 'no ones turn!!'			
+		})
+
+
 		setTimeout(function () {
 			update();
 		}, reloadDelay);
