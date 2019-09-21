@@ -27,7 +27,10 @@ def onBoxTalkEnd(name, completed):
     #    engine.endLoop()
 
 def talkToBrains(target, payload):
-    response = requests.post('https://dailier.herokuapp.com/'+target, json = payload)
+    url = 'https://dailier.herokuapp.com/'+target
+    print('POST ' + url)
+    response = requests.post(url, json = payload)
+    print('Received response: ' + response.text)
     return response.json()
 
 def recordUntilKeyword(board):
@@ -48,6 +51,10 @@ def recordUntilKeyword(board):
     print("STOP RECORDING")
     return ' '.join(collected)
 
+def processActions(response, board):
+    for action in response['actions']:
+        processAction(action, board)
+
 def processAction(action, board):
     if action['type'] == 'SAY':
         board.led.state = Led.ON
@@ -57,7 +64,8 @@ def processAction(action, board):
             print("talking")
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
-        talkToBrains(action['callback'], { 'data': text })
+        newActions = talkToBrains(action['callback'], { 'data': text })
+        processActions(newActions, board)
 
 def main():
 
@@ -68,9 +76,8 @@ def main():
         print('PRESS BUTTON TO START APP')
         board.button.wait_for_press()
         print('START THE APP')
-        content = talkToBrains('actions', { "action": "start" })
-        for action in content['actions']:
-            processAction(action, board)
+        response = talkToBrains('actions', { "action": "start" })
+        processActions(response, board)
 
         board.button.wait_for_release()
         print('OFF')
