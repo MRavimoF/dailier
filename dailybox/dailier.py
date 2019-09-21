@@ -30,6 +30,24 @@ def talkToBrains(target, payload):
     response = requests.post('https://dailier.herokuapp.com/'+target, json = payload)
     return response.json()
 
+def recordUntilKeyword(board):
+    print("START RECORDING")
+    board.led.state = Led.BLINK
+    collected = []
+    loop = True
+    while loop:
+        text = client.recognize(language_code=args.language)
+        if text is None:
+            print('You said nothing.')
+        else:
+            print("You said: " + text)
+            sanitized = text.lower()
+            loop = sanitized.find('peacock') == -1
+            collected.append(sanitized.replace('peacock',''))
+    board.led.state = Led.OFF
+    print("STOP RECORDING")
+    return ' '.join(collected)
+
 def processAction(action, board):
     if action['type'] == 'SAY':
         board.led.state = Led.ON
@@ -38,15 +56,8 @@ def processAction(action, board):
         while engine.isBusy():
             print("talking")
     elif action['type'] == 'RECORD':
-        print("START RECORDING")
-        board.led.state = Led.BLINK
-        text = client.recognize(language_code=args.language)
-
-        if text is None:
-            print('You said nothing.')
-        else:
-            print(text.lower())
-            talkToBrains(action['payload'], { 'payload': text })
+        text = recordUntilKeyword(board)
+        talkToBrains(action['payload'], { 'payload': text })
 
 def main():
 
