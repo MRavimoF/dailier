@@ -53,6 +53,7 @@ def recordUntilKeyword(board):
     return ' '.join(collected)
 
 def exitRecording():
+    print("exiting")
     return False
 
 def processActions(actions, board):
