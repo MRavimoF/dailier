@@ -4,6 +4,7 @@ import requests
 import pyttsx3
 import argparse
 import locale
+import time
 
 from aiy.board import Board, Led
 from aiy.cloudspeech import CloudSpeechClient
@@ -73,7 +74,7 @@ def processAction(action, board):
         engine.say(action['data'], action['type'])
         engine.runAndWait()
         while engine.isBusy():
-            print("talking too long")
+            time.sleep(0.1)
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
         newActions = talkToBrains(action['callback'], { 'data': text })
