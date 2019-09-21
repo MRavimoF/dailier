@@ -135,28 +135,6 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 
 });
 
-app.post("/participants/:name/report/yesterday", (req, res, next) => {
-	const insertIssueLink = (inputString, issue) => {
-		const textLoc = inputString.search(issue.number.toString())
-		const textLocEnd = textLoc + issue.number.toString().length
-		const before = inputString.slice(0, textLoc)
-		const after = inputString.slice(textLocEnd, inputString.length)
-		return `${before}<strong><a href="${issue.url}" target="_blank">ISSUE #${issue.number.toString()}</strong> ( ${issue.title} )${after}`
-	}
-
-	octokit.issues
-		.listForRepo({ owner: "MRavimoF", repo: "dailier" })
-		.then(({ data }) => {
-			const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
-			const numbers = getNumbers(command.data)
-			const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
-			report.yesterday = issues.forEach(i => {
-				command.data = insertIssueLink(report.yesterday, i)
-			}) || command.data
-			respondActions(res, actions.ackAction());
-		})
-});
-
 
 app.listen(port, () => {
 	console.log("Server running on port " + port);
