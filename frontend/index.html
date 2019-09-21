@@ -26,7 +26,7 @@
 			z-index: 5000;
 			padding-bottom: 2rem;
 		}
-		
+
 
 		}
 
@@ -97,7 +97,7 @@
 
 	const textBlock = (label, obj) => `
 		<p><strong>${label}</strong></p>
-		${displayTimeIfExists(obj)}
+		${displayTimeIfExists(obj) || ''}
 	<p>${textOrEllipsis(obj)}</p>
 	`
 
@@ -113,17 +113,9 @@
 
 			getData("whosturnisit", data => {
 				const personId = data.currentPerson && data.currentPerson.toString().toLowerCase()
-				// document.getElementById("whosturnisit").innerHTML = data.currentPerson ? data.currentPerson + ' turn' : 'no ones turn!!'
-				// $(`.person-button-bar:not([data-person='${personId}]')`).removeClass('success')
 				if (personId) {
 					$(`[data-person='${personId}']`).addClass('success')
-
-					$('html, body').animate(
-						{
-							scrollTop: $(`#person-row-${personId}`).offset().top + 10 * 16,
-						},
-						500,
-						'linear'
+					$('html, body').animate( { scrollTop: $(`#person-row-${personId}`).offset().top - 15 * 10 }, 500, 'linear'
 					)
 
 				}
@@ -134,8 +126,8 @@
 		getData("daily", data => {
 			document.getElementById("transcript").innerHTML =
 				data.report
-					.map(i => `
-									<tr id="person-row-${i.participant.toString().toLowerCase()}">
+					.map((i, index) => `
+									<tr id="person-row-${index > 0 ? i.participant.toString().toLowerCase() : ''}">
 										<td>
 											<span class="float-right label secondary" data-person="${i.participant.toString().toLowerCase()}">${i.participant}</span>
 
