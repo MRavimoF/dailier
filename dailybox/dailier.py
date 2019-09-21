@@ -27,7 +27,7 @@ def onBoxTalkEnd(name, completed):
     #    engine.endLoop()
 
 def talkToBrains(target, payload):
-    url = 'https://dailier.herokuapp.com/'+target
+    url = 'https://dailier.herokuapp.com'+target
     print('POST ' + url)
     response = requests.post(url, json = payload)
     print('Received response: ' + response.text)
@@ -76,7 +76,7 @@ def main():
         print('PRESS BUTTON TO START APP')
         board.button.wait_for_press()
         print('START THE APP')
-        response = talkToBrains('actions', { "action": "start" })
+        response = talkToBrains('/actions', { "action": "start" })
         processActions(response, board)
 
         board.button.wait_for_release()
