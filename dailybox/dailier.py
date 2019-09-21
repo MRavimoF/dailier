@@ -47,6 +47,8 @@ def recordUntilKeyword(board):
             sanitized = text.lower()
             loop = sanitized.find('peacock') == -1
             collected.append(sanitized.replace('peacock',''))
+            board.button.wait_for_release()
+            loop = False
     board.led.state = Led.OFF
     print("STOP RECORDING")
     return ' '.join(collected)
@@ -62,8 +64,6 @@ def processAction(action, board):
         engine.runAndWait()
         while engine.isBusy():
             print("talking too long")
-            board.button.wait_for_release()
-            break
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
         newActions = talkToBrains(action['callback'], { 'data': text })
