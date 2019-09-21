@@ -41,15 +41,15 @@
 											<span class="float-right label">${i.participant}</span>
 
 											<p><strong>Yesterday</strong></p>
-											<p>${i.yesterday ? i.yesterday : '...'}</p>
+											<p>${i.yesterday && i.yesterday.text ? i.yesterday.text : '...'}</p>
 											<hr/>
 
 											<p><strong>Today</strong></p>
-											<p>${i.today ? i.today : '...'}</p>
+											<p>${i.today && i.today.text ? i.today.text : '...'}</p>
 											<hr/>
 											
 											<p><strong>Blockers</strong></p>
-											<p>${i.blockers ? i.blockers : '...'}</p>
+											<p>${i.blockers && i.blockers.text ? i.blockers.text : '...'}</p>
 											</td>
 										</tr>
 								`)
