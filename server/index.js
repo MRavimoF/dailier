@@ -20,6 +20,8 @@ app.post("/actions", (req, res, next) => {
 	console.log("Received request: " + JSON.stringify(req.body));
 
 	if(command.action === 'start') {
+		recording = [];
+		participants = [];
 		respondActions(res, [
 			actions.sayAction(intro),
 			actions.recordAction("participants")
