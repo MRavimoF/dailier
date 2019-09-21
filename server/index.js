@@ -70,6 +70,19 @@ app.get("/daily", (req, res, next) => {
 app.get("/github-issues", (req, res, next) => {
 });
 
+app.get("/whosturnisit", (req,res,next) => {
+	for (let i = 0; i < dailyReports.length; i++) {
+		const report = dailyReports[i];
+		if (!report.yesterday.text || !report.today.text || !report.blockers.text) {
+			res.json({
+				currentPerson: report.participant
+			});
+			return;
+		}
+	}
+
+	res.json({currentPerson: null});
+});
 
 app.post("/participants", (req, res, next) => {
 	const command = req.body;
@@ -126,7 +139,7 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	.listForRepo({ owner: "MRavimoF", repo: "dailier" })
 	.then(({ data }) => {
 		const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
-		const numbers = getNumbers(command.data)
+		const numbers = getNumbers(command.data.text)
 		const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
 		let tempStr = report[topic].text;
 		issues.forEach(i => {
