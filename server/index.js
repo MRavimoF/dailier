@@ -61,14 +61,8 @@ app.get("/daily", (req, res, next) => {
 });
 
 app.get("/github-issues", (req, res, next) => {
-	octokit.issues
-		.listForRepo({ owner: "MRavimoF", repo: "dailier" })
-		.then(({ data }) => {
-			res.json(
-				data.map(i => ({ number: i.number, title: i.title, url: i.url }))
-			);
-		});
 });
+
 
 app.post("/participants", (req, res, next) => {
 	const command = req.body;
@@ -84,6 +78,9 @@ app.get("/participants", (req, res, next) => {
 	});
 });
 
+const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
+
+
 app.post("/participants/:name/report/yesterday", (req, res, next) => {
 	const participant = req.params.name;
 	const command = req.body;
@@ -93,10 +90,27 @@ app.post("/participants/:name/report/yesterday", (req, res, next) => {
 		report = emptyReport(participant);
 		dailyReports.push(report);
 	}
-
+	
+	const insertIssueLink = (inputString, issue)  => {
+		const textLoc = inputString.search(issue.number.toString())
+		const textLocEnd = textLoc + issue.number.toString().length
+		const before = inputString.slice(0, textLoc)
+		const after = inputString.slice(textLocEnd, inputString.length)
+		return `${before}<strong><a href="${issue.url}" target="_blank">ISSUE #${issue.number.toString()}</strong> ( ${issue.title} )${after}`
+	}
+	
 	report.yesterday = command.data;
-	respondActions(res, actions.ackAction());
-});
+	octokit.issues
+		.listForRepo({ owner: "MRavimoF", repo: "dailier" })
+		.then(({ data }) => {
+			const numbers = getNumbers(command.data)
+			const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
+			issues.forEach(i => {
+				report.yesterday = insertIssueLink(report.yesterday, i)
+			})
+			respondActions(res, actions.ackAction());
+		})
+	});
 
 app.listen(port, () => {
 	console.log("Server running on port " + port);
