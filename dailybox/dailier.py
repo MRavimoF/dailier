@@ -62,6 +62,8 @@ def processAction(action, board):
         engine.runAndWait()
         while engine.isBusy():
             print("talking")
+            board.button.wait_for_release()
+            break
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
         newActions = talkToBrains(action['callback'], { 'data': text })
