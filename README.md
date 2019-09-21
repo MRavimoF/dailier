@@ -100,7 +100,9 @@ curl -X POST \
   https://dailier.herokuapp.com/participants/James/report/yesterday \
   -H 'Content-Type: application/json' \
   -d '{
-	"data": "I am almost done with issue number 10 and I just have to finish up a few things after the daily."
+	"data": {
+    "text": "I am almost done with issue number 10 and I just have to finish up a few things after the daily."
+  }
 }'
 ```
 
