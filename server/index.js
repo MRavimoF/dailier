@@ -249,7 +249,7 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	const octokit = new Octokit();
 
 	octokit.issues
-		.listForRepo({ owner: "MRavimoF", repo: "dailier" })
+		.listForRepo({ owner: "MRavimoF", repo: "dailier", state: "all" })
 		.then(({ data }) => {
 			const getNumbers = inputString => inputString.match(/\d+/g).map(Number);
 			const numbers = getNumbers(command.data.text);
