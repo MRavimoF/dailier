@@ -128,7 +128,7 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 		const textLocEnd = textLoc + issue.number.toString().length
 		const before = inputString.slice(0, textLoc)
 		const after = inputString.slice(textLocEnd, inputString.length)
-		return `${before}<strong><a href="${issue.url}" target="_blank">#${issue.number.toString()}</a> ( ${issue.title} ) </strong>${after}`
+		return `${before}<strong><a href="${issue.html_url}" target="_blank">#${issue.number.toString()}</a> ( ${issue.title} ) </strong>${after}`
 	}
 
 	report[topic] = command.data
@@ -140,7 +140,7 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	.then(({ data }) => {
 		const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
 		const numbers = getNumbers(command.data.text)
-		const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
+		const issues = data.map(i => ({ number: i.number, title: i.title, html_url: i.html_url })).filter(i => numbers.includes(i.number))
 		let tempStr = report[topic].text;
 		issues.forEach(i => {
 			tempStr = insertIssueLink(tempStr, i)
