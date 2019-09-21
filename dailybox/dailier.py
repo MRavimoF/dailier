@@ -39,7 +39,7 @@ def talkToBrains(target, payload):
 def recordUntilKeyword(board):
     global loop
     print("START RECORDING")
-    startTime = datetime.datetime.now()
+    startTime = '{}'.format(datetime.datetime.now())
     board.led.state = Led.BLINK
     board.button.when_pressed = quitRecording
     collected = []
@@ -59,7 +59,7 @@ def recordUntilKeyword(board):
     board.led.state = Led.OFF
     board.button.when_pressed = None
     print("STOP RECORDING")
-    data = {"text": " ".join(collected), "startAt": startTime, "endAt": datetime.datetime.now()}
+    data = {"text": " ".join(collected), "startAt": startTime, "endAt": '{}'.format(datetime.datetime.now())}
     print("DATA", data)
     return data
 
