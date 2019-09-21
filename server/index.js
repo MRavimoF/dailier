@@ -109,9 +109,8 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	}
 
 	report[topic] = command.data;
-	respondActions(res, [
-			actions.dailyReportAction(dailyReports)
-	]);
+	respondActions(res, actions.dailyReportAction(dailyReports)
+	);
 });
 
 app.listen(port, () => {
