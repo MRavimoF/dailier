@@ -42,8 +42,9 @@ def recordUntilKeyword(board):
     collected = []
     loop = True
     while loop:
-        # text = client.recognize(language_code=args.language)
+        print("START calling client.recoqnize")
         text = client.recognize(language_code=args.language)
+        print("END calling client.recoqnize")
         if text is None:
             print('You said nothing.')
         else:
