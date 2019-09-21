@@ -33,8 +33,9 @@
 				<thead>
 					<tr>
 						<th width="200">Participant</th>
-						<th>Transcript</th>
-						<th width="150">Issues</th>
+						<th>Yesterday</th>
+						<th>Today</th>
+						<th width="150">Blockers</th>
 					</tr>
 				</thead>
 				<tbody id="transcript"> </tbody>
@@ -48,16 +49,17 @@
 
 <script>
 
-	const reloadDelay = ;
+	const reloadDelay = 1000;
 	setTimeout(function () {
 		update();
 	}, reloadDelay);
 
 	function update() {
-		getData("transcript", data => {
+		getData("daily", data => {
+			console.log(data)
 			document.getElementById("transcript").innerHTML =
-				data.sentences
-					.map(it => `<tr><td></td><td>${it}</td><td></td></tr>`)
+				data.report
+					.map(i => `<tr>${i.participant}<td></td><td>${i.yesterday}</td><td>${i.today}</td><td>${i.blockers}</td></tr>`)
 					.join("");
 		});
 

@@ -81,10 +81,20 @@ curl -X GET \
 ## Send yesterdays report for partipant
 ```
 curl -X POST \
-  http://localhost:3000/participants/Mikko/report/yesterday \
+  https://dailier.herokuapp.com/participants/Mikko/report/yesterday \
   -H 'Content-Type: application/json' \
   -d '{
 	"data": "Lots of hacking"
+}'
+```
+
+## Send yesterdays report for partipant with github issue
+```
+curl -X POST \
+  https://dailier.herokuapp.com/participants/James/report/yesterday \
+  -H 'Content-Type: application/json' \
+  -d '{
+	"data": "I am almost done with issue number 10 and I just have to finish up a few things after the daily."
 }'
 ```
 
@@ -97,15 +107,6 @@ curl -X GET \
       	"action": "start"
 	}'
 ```
-
-## Get github issues
-```
-curl -X GET \
-  https://dailier.herokuapp.com/github-issues \
-    -H 'Content-Type: application/json'
-```
-
-
 
 # The admin interface
 For debugging and administration there is a web interface for the system availabla at:
