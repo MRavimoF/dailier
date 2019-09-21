@@ -4,7 +4,6 @@ import requests
 import pyttsx3
 import argparse
 import locale
-import time
 
 from aiy.board import Board, Led
 from aiy.cloudspeech import CloudSpeechClient
@@ -44,7 +43,7 @@ def recordUntilKeyword(board):
     loop = True
     while loop:
         # text = client.recognize(language_code=args.language)
-        text = client.start_listening()
+        text = client.recognize(language_code=args.language)
         if text is None:
             print('You said nothing.')
         else:
@@ -74,7 +73,7 @@ def processAction(action, board):
         engine.say(action['data'], action['type'])
         engine.runAndWait()
         while engine.isBusy():
-            time.sleep(0.1)
+            print("talking too long")
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
         newActions = talkToBrains(action['callback'], { 'data': text })
