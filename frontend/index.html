@@ -13,7 +13,9 @@
 
 <body>
 
-	<ul class="menu" id="participants"></ul>
+	
+
+	<ul class="menu" id="participants">Loading...</ul>
 
 	<table>
 		<tbody id="transcript"> </tbody>
@@ -51,14 +53,14 @@
 											</td>
 										</tr>
 								`)
-					.join("");
+					.join("") || "no reports";
 		});
 
 		getData("participants", data => {
 			document.getElementById("participants").innerHTML =
 				data.participants
 					.map(it => `<li><span class="label secondary">${it}</span></li> `)
-					.join("")
+					.join("") || "no participants"
 		});
 		setTimeout(function () {
 			update();
@@ -73,7 +75,7 @@
 				oncomplete(myObj);
 			}
 		};
-		xmlhttp.open("GET", "http://localhost:3000/" + resource, true);
+		xmlhttp.open("GET", "https://dailier.herokuapp.com/" + resource, true);
 		xmlhttp.send();
 	}
 </script>
