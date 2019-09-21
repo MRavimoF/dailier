@@ -42,6 +42,8 @@ app.get("/docs", (req, res) => {
 	res.sendFile(path.join(__dirname, "redoc.html"));
 });
 
+app.use('/', express.static(path.join(__dirname, '../frontend')))
+
 var recording = [];
 var participants = [];
 
