@@ -35,6 +35,7 @@ def talkToBrains(target, payload):
     return response.json()['actions']
 
 def recordUntilKeyword(board):
+    global loop
     print("START RECORDING")
     board.led.state = Led.BLINK
     collected = []
@@ -54,6 +55,7 @@ def recordUntilKeyword(board):
     return ' '.join(collected)
 
 def quitRecording():
+    global loop
     print('quit recording loop')
     loop = False
 
