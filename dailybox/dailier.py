@@ -58,7 +58,9 @@ def recordUntilKeyword(board):
     board.led.state = Led.OFF
     board.button.when_pressed = None
     print("STOP RECORDING")
-    return {text: ' '.join(collected), startAt: startTime, endAt: time.time()}
+    data = {"text": " ".join(collected), "startAt": startTime, "endAt": time.time()}
+    print("DATA", data)
+    return data
 
 def quitRecording():
     global loop
