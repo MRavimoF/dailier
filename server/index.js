@@ -72,8 +72,21 @@ app.get("/github-issues", (req, res, next) => {
 
 app.post("/participants", (req, res, next) => {
 	const command = req.body;
-	const combined = participants.concat(command.data.split(" "));
+	const newParticipants = command.data.trim()
+		.split(" ")
+		.filter(it => it.trim().length != 0)
+	const combined = participants.concat(newParticipants);
 	participants = Array.from(new Set(combined));
+
+	if(participants.length === 0) {
+		respondActions(res,
+				[
+					 actions.sayAction("Could not hear any participants, can you repeat please?"),
+					 actions.recordAction("/participants")
+				])
+		return;
+	}
+
 	dailyReports = initializeReport(participants);
 	respondActions(res, actions.dailyReportAction(dailyReports));
 });
