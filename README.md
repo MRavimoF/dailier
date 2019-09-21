@@ -6,7 +6,11 @@ CodeCamp2019™️  project.
 # The server
 Found under `/server` is a node REST service. Start with `node index.js`
 
-Available endpoints:
+# API Docs
+
+See additional generated docs at http://localhost:3000/docs or https://dailier.herokuapp.com/docs
+
+# Available endpoints:
 
 ## Start the daily
 Request:
@@ -67,7 +71,9 @@ curl -X POST \
   https://dailier.herokuapp.com/participants \
   -H 'Content-Type: application/json' \
   -d '{
-	"data": "Mikko James Kai"
+	"data": {
+    "text": "Mikko James Kai"
+  }
 }'
 ```
 
@@ -78,7 +84,7 @@ curl -X GET \
   -H 'Content-Type: application/json'
 ```
  
-## Send yesterdays report for partipant
+## Send yesterdays report for participant
 ```
 curl -X POST \
   https://dailier.herokuapp.com/participants/Mikko/report/yesterday \
@@ -88,7 +94,7 @@ curl -X POST \
 }'
 ```
 
-## Send yesterdays report for partipant with github issue
+## Send yesterdays report for participant with github issue
 ```
 curl -X POST \
   https://dailier.herokuapp.com/participants/James/report/yesterday \
