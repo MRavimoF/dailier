@@ -14,7 +14,6 @@ const Octokit = require("@octokit/rest");
 const swaggerJSDoc = require("swagger-jsdoc");
 const path = require('path');
 
-// -- setup up swagger-jsdoc --
 const swaggerDefinition = {
 	info: {
 		title: "Dailier API",
@@ -31,8 +30,6 @@ const options = {
 };
 const swaggerSpec = swaggerJSDoc(options);
 
-// -- routes for docs and generated swagger spec --
-
 app.get("/swagger.json", (req, res) => {
 	res.setHeader("Content-Type", "application/json");
 	res.send(swaggerSpec);
@@ -42,11 +39,10 @@ app.get("/docs", (req, res) => {
 	res.sendFile(path.join(__dirname, "redoc.html"));
 });
 
-app.use('/images', express.static(path.join(__dirname, '../frontend/images')))
-
-app.get("/", (req, res) => {
-	res.sendFile(path.join(__dirname, "../frontend/index.html"));
-});
+// app.use('/images', express.static(path.join(__dirname, '../frontend/images')))
+// app.get("/", (req, res) => {
+// 	res.sendFile(path.join(__dirname, "../frontend/index.html"));
+// });
 
 var recording = [];
 var participants = [];
