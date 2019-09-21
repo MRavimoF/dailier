@@ -51,7 +51,7 @@ def recordUntilKeyword(board):
 def processAction(action, board):
     if action['type'] == 'SAY':
         board.led.state = Led.ON
-        engine.say(action['payload'], action['type'])
+        engine.say(action['data'], action['type'])
         engine.runAndWait()
         while engine.isBusy():
             print("talking")
