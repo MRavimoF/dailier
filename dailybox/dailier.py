@@ -28,9 +28,9 @@ def onBoxTalkEnd(name, completed):
 
 def talkToBrains(target, payload):
     url = 'https://dailier.herokuapp.com/'+target
-    print('POST' + url)
+    print('POST ' + url)
     response = requests.post(url, json = payload)
-    print('Received response ' + response.content)
+    print('Received response: ' + response.text)
     return response.json()
 
 def recordUntilKeyword(board):
