@@ -152,7 +152,7 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	})
 
 	const nextActions = actions.dailyReportAction(dailyReports);
-	if(actions)
+	if(nextActions)
 		respondActions(res, nextActions);
 	else {
 		// All good. Everyone accounted for.
