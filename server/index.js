@@ -16,7 +16,7 @@ var recording = [];
 var participants = [];
 
 const intro =
-	"Good day. My name is Lucy and I will be guiding you through your daily standup. Who is present?";
+	"Good day. My name is Lucy and I will be guiding you through your daily stand up. Who is present?";
 
 /**
  * Will be initialized with entry for each of the participant
@@ -157,7 +157,7 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	else {
 		// All good. Everyone accounted for.
 		dailyEnded = new Date();
-		respondActions(res, [actions.ackAction()])
+		respondActions(res, [actions.sayAction("Good job team! Keep up the good work and EBIT flowing. Let's do this again tomorrow. Make dailies great again. Go tell your friends.")]);
 	}
 });
 
