@@ -1,55 +1,88 @@
 <html>
-	<head>
-		<style>
-			body { font-size: 200% }
-		</style>
 
-		</head>
-	<body>
+<head>
+	<style>
+		#participants span {
+			padding: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+	</style>
+	<title>Dailier Meeting</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css" />
+</head>
 
-		<h1>Daily participants:</h1>
-		<div id="participants"></div>
+<body>
+	<div class="grid-x">
+		<div class="cell medium-4">
+			<div class="card">
+				<div class="card-section">
+					<ul class="vertical menu	">
+						<div id="participants"></div>
+					</ul>
+				</div>
+			</div>
 
-		<h1>Transcript so far:</h1>
-		<div id="transcript"></div>
+			<div class="progress success">
+				<div class="progress-meter" style="width: 67%">
+					<p class="progress-meter-text">2m 25s</p>
+				</div>
+			</div>
+		</div>
+		<div class="cell medium-8">
+			<table>
+				<thead>
+					<tr>
+						<th width="200">Participant</th>
+						<th>Transcript</th>
+						<th width="150">Issues</th>
+					</tr>
+				</thead>
+				<tbody id="transcript"> </tbody>
+			</table>
 
-	</body>
+		</div>
+	</div>
+</body>
+
 
 
 <script>
-setTimeout(function(){ update(); },200);
+	setTimeout(function () {
+		update();
+	}, 200);
 
-function update() {
-
-	getData("transcript", (data) =>
-		{
-			document.getElementById("transcript").innerHTML = 
-		  '<ul>' +
-		  data.sentences.map(it => `<li>${it}</li>`).join('') +
-		  '</ul>';
+	function update() {
+		getData("transcript", data => {
+			document.getElementById("transcript").innerHTML =
+				data.sentences
+					.map(it => `<tr><td></td><td>${it}</td><td></td></tr>`)
+					.join("");
 		});
 
-	getData("participants", (data) =>
-		{
-			document.getElementById("participants").innerHTML = 
-		  '<ul>' +
-		  data.participants.map(it => `<li>${it}</li>`).join('') +
-		  '</ul>';
+		getData("participants", data => {
+			document.getElementById("participants").innerHTML =
+				'<ul class="vertical menu">' +
+				data.participants
+					.map(it => `<li><span class="label secondary">${it}</span></li> `)
+					.join("") +
+				"</ul>";
 		});
-	setTimeout(function(){ update(); }, 200);
-}
+		setTimeout(function () {
+			update();
+		}, 200);
+	}
 
-function getData(resource, oncomplete) {
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-  	if (this.readyState == 4 && this.status == 200) {
-    		var myObj = JSON.parse(this.responseText);
-		oncomplete(myObj);
-  	}
-	};
-	xmlhttp.open("GET", "https://dailier.herokuapp.com/" + resource, true);
-	xmlhttp.send();
-}
-
+	function getData(resource, oncomplete) {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var myObj = JSON.parse(this.responseText);
+				oncomplete(myObj);
+			}
+		};
+		xmlhttp.open("GET", "https://dailier.herokuapp.com/" + resource, true);
+		xmlhttp.send();
+	}
 </script>
-	</html>
+
+</html>
