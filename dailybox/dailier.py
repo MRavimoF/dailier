@@ -61,7 +61,7 @@ def processAction(action, board):
         engine.say(action['data'], action['type'])
         engine.runAndWait()
         while engine.isBusy():
-            print("talking")
+            print("talking too long")
             board.button.wait_for_release()
             break
     elif action['type'] == 'RECORD':
