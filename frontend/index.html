@@ -12,37 +12,12 @@
 </head>
 
 <body>
-	<div class="grid-x">
-		<div class="cell medium-4">
-			<div class="card">
-				<div class="card-section">
-					<ul class="vertical menu	">
-						<div id="participants"></div>
-					</ul>
-				</div>
-			</div>
 
-			<div class="progress success">
-				<div class="progress-meter" style="width: 67%">
-					<p class="progress-meter-text">2m 25s</p>
-				</div>
-			</div>
-		</div>
-		<div class="cell medium-8">
-			<table>
-				<thead>
-					<tr>
-						<th width="200">Participant</th>
-						<th>Yesterday</th>
-						<th>Today</th>
-						<th width="150">Blockers</th>
-					</tr>
-				</thead>
-				<tbody id="transcript"> </tbody>
-			</table>
+	<ul class="menu" id="participants"></ul>
 
-		</div>
-	</div>
+	<table>
+		<tbody id="transcript"> </tbody>
+	</table>
 </body>
 
 
@@ -58,22 +33,32 @@
 		getData("daily", data => {
 			document.getElementById("transcript").innerHTML =
 				data.report
-					.map(i => `<tr>
-									<td>${i.participant}</td>
-									<td>${i.yesterday}</td>
-									<td>${i.today}</td>
-									<td>${i.blockers}</td>
-								</tr>`)
+					.map(i => `
+									<tr>
+										<td>
+											<span class="float-right label">${i.participant}</span>
+
+											<p><strong>Yesterday</strong></p>
+											<p>${i.yesterday ? i.yesterday : '...'}</p>
+											<hr/>
+
+											<p><strong>Today</strong></p>
+											<p>${i.today ? i.today : '...'}</p>
+											<hr/>
+											
+											<p><strong>Blockers</strong></p>
+											<p>${i.blockers ? i.blockers : '...'}</p>
+											</td>
+										</tr>
+								`)
 					.join("");
 		});
 
 		getData("participants", data => {
 			document.getElementById("participants").innerHTML =
-				'<ul class="vertical menu">' +
 				data.participants
 					.map(it => `<li><span class="label secondary">${it}</span></li> `)
-					.join("") +
-				"</ul>";
+					.join("")
 		});
 		setTimeout(function () {
 			update();
@@ -88,7 +73,7 @@
 				oncomplete(myObj);
 			}
 		};
-		xmlhttp.open("GET", "https://dailier.herokuapp.com/" + resource, true);
+		xmlhttp.open("GET", "http://localhost:3000/" + resource, true);
 		xmlhttp.send();
 	}
 </script>
