@@ -4,19 +4,44 @@
 	<title>Dailier Meeting</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<style>
-		html, body {
+		html,
+		body {
 			background: #ffba00;
 			color: #414141;
+			scroll-behavior: smooth;
 		}
+
+		body {
+			padding-top: 10rem;
+		}
+
+		header {
+			text-align: center;
+			position: fixed;
+			top: 0;
+			width: 100%;
+			background: #ffba00;
+			z-index: 5000;
+			padding-bottom: 2rem;
+		}
+		
+
+		}
+
 		#participants span {
 			padding: 0.5rem;
 			margin-bottom: 0.5rem;
 		}
-		td, th, tbody {
+
+		td,
+		th,
+		tbody {
 			background: none;
 			border: none;
 		}
+
 		tbody tr:nth-child(even) {
 			background-color: #414141;
 
@@ -27,12 +52,13 @@
 
 <body>
 
-	
-<img src="images/dailier-logo.png" alt="" style="max-height:150px;">
+	<header>
 
-<h1 id="whosturnisit"></h1>
+		<img src="images/dailier-logo.png" alt="" style="max-height:100px;">
+		<ul class="menu align-center" id="participants">Loading...</ul>
+	</header>
 
-	<ul class="menu align-center" id="participants">Loading...</ul>
+
 
 	<table>
 		<tbody id="transcript"> </tbody>
@@ -47,6 +73,8 @@
 	setTimeout(function () {
 		update();
 	}, reloadDelay);
+
+
 
 	const diffTimeInSeconds = (a, b) => {
 		mA = moment(a)
@@ -74,13 +102,42 @@
 	`
 
 	function update() {
+		getData("participants", data => {
+			document.getElementById("participants").innerHTML =
+				data.participants
+					.map(person => `<li><span class="label secondary person-turn-button" data-person="${person.toString().toLowerCase()}">${person}</span></li> `)
+					.join("") || "no participants"
+		});
+
+		$(document).ready(() => {
+
+			getData("whosturnisit", data => {
+				const personId = data.currentPerson && data.currentPerson.toString().toLowerCase()
+				// document.getElementById("whosturnisit").innerHTML = data.currentPerson ? data.currentPerson + ' turn' : 'no ones turn!!'
+				// $(`.person-button-bar:not([data-person='${personId}]')`).removeClass('success')
+				if (personId) {
+					$(`[data-person='${personId}']`).addClass('success')
+
+					$('html, body').animate(
+						{
+							scrollTop: $(`#person-row-${personId}`).offset().top,
+						},
+						500,
+						'linear'
+					)
+
+				}
+			})
+
+		})
+
 		getData("daily", data => {
 			document.getElementById("transcript").innerHTML =
 				data.report
 					.map(i => `
-									<tr>
+									<tr id="person-row-${i.participant.toString().toLowerCase()}">
 										<td>
-											<span class="float-right label secondary">${i.participant}</span>
+											<span class="float-right label secondary" data-person="${i.participant.toString().toLowerCase()}">${i.participant}</span>
 
 											${textBlock('Yesterday', i.yesterday)}
 											${textBlock('Today', i.today)}
@@ -92,16 +149,6 @@
 					.join("") || "no reports";
 		});
 
-		getData("participants", data => {
-			document.getElementById("participants").innerHTML =
-				data.participants
-					.map(it => `<li><span class="label secondary">${it}</span></li> `)
-					.join("") || "no participants"
-		});
-
-		getData("whosturnisit", data => {
-			document.getElementById("whosturnisit").innerHTML = data.currentPerson ? data.currentPerson + ' turn' : 'no ones turn!!'			
-		})
 
 
 		setTimeout(function () {
