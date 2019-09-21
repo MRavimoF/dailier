@@ -62,7 +62,7 @@ def processAction(action, board):
     elif action['type'] == 'RECORD':
         text = recordUntilKeyword(board)
         newActions = talkToBrains(action['callback'], { 'data': text })
-        processActions(newActions)
+        processActions(newActions, board)
 
 def main():
 
