@@ -25,15 +25,16 @@ The response:
     "actions": [
         {
             "type": "SAY",
-            "payload": "The text say outloud"
+            "callback": null,
+            "data": "Good day. My name is Lucy and I will be guiding you through your daily standup. Who is present?"
         },
         {
             "type": "RECORD",
-            "payload": "participants"
+            "callback": "participants",
+            "data": null
         }
     ]
-}
-```
+}```
 So this should be interpreted as follows on DailyBox:
 1. Say the message
 2. Start recording
@@ -45,8 +46,7 @@ curl -X POST \
   https://dailier.herokuapp.com/participants \
   -H 'Content-Type: application/json' \
   -d '{
-	"action": "add",
-	"payload": "Mikko James Kai"
+	"data": "Mikko James Kai"
 }'
 ```
 
@@ -54,10 +54,7 @@ curl -X POST \
 ```
 curl -X GET \
   https://dailier.herokuapp.com/participants \
-    -H 'Content-Type: application/json' \
-      -d '{
-      	"action": "start"
-	}'
+  -H 'Content-Type: application/json'
 ```
  
 ## Send text

@@ -27,10 +27,9 @@ def onBoxTalkEnd(name, completed):
     engine.endLoop()
 
 def record(board):
+    board.led.state = Led.BLINK
     while True:
-        board.led.state = Led.BLINK
         text = client.recognize(language_code=args.language)
-
         if text is None:
             print('You said nothing.')
         else:

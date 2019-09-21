@@ -1,6 +1,8 @@
+var actions = require("./actions");
+
 var express = require("express");
 const bodyParser = require('body-parser');
-cors = require('cors')
+const cors = require('cors')
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -19,19 +21,15 @@ app.post("/actions", (req, res, next) => {
 
 	if(command.action === 'start') {
 		respondActions(res, [
-			sayAction(intro),
-			recordAction("participants")
+			actions.sayAction(intro),
+			actions.recordAction("participants")
 		]);
 	}
 
 	if(command.action === 'dictate') {
 		recording.push(command.payload);
-		res.json(ackResponse());
+		res.json(actions.ackAction());
 	}
-
-	recording.forEach(it =>
-		console.log(it)
-	);
 
 });
 
@@ -45,10 +43,9 @@ app.get("/transcript", (req, res, next) => {
 
 app.post("/participants", (req, res, next) => { 
 	const command = req.body;
-
-	const combined = participants.concat(command.payload.split(" "));
+	const combined = participants.concat(command.data.split(" "));
 	participants = Array.from(new Set(combined));
-	res.json(ackResponse());
+	res.json(actions.ackAction());
 });
 
 app.get("/participants", (req, res, next) => {
@@ -67,32 +64,5 @@ function respondActions(res, actions) {
 	});
 }
 
-function sayAction(message) {
-	return action("SAY", message);
-}
 
-function recordAction(recordType) {
-	return action("RECORD", recordType);
-}
-
-function action(type, payload) {
-	return {
-		type: type,
-		payload: payload
-	};
-}
-
-function ackResponse() {
-	return {
-		action: "ACK",
-		payload: "received command"
-	}
-}
-
-function respond(message) {
-	return {
-		action: "SAY",
-		payload: message
-	}
-};
 
