@@ -11,7 +11,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const Octokit = require("@octokit/rest");
-const octokit = new Octokit();
 
 var recording = [];
 var participants = [];
@@ -91,6 +90,7 @@ app.get("/participants", (req, res, next) => {
 	});
 });
 
+
 app.post("/participants/:name/report/:topic", (req, res, next) => {
 	const participant = req.params.name;
 	const topic = req.params.topic;
@@ -102,9 +102,37 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 		dailyReports.push(report);
 	}
 
-	report[topic] = command.data;
-	respondActions(res, actions.dailyReportAction(dailyReports)
-	);
+
+	const insertIssueLink = (inputString, issue) => {
+		const textLoc = inputString.search(issue.number.toString())
+		const textLocEnd = textLoc + issue.number.toString().length
+		const before = inputString.slice(0, textLoc)
+		const after = inputString.slice(textLocEnd, inputString.length)
+		return `${before}<strong><a href="${issue.url}" target="_blank">#${issue.number.toString()}</a> ( ${issue.title} ) </strong>${after}`
+	}
+
+	report[topic] = command.data
+	
+	const octokit = new Octokit();
+	
+	octokit.issues
+	.listForRepo({ owner: "MRavimoF", repo: "dailier" })
+	.then(({ data }) => {
+		const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
+		const numbers = getNumbers(command.data)
+		const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
+		let tempStr = report[topic];
+		issues.forEach(i => {
+			tempStr = insertIssueLink(tempStr, i)
+		})
+		report[topic] = tempStr || command.data
+	}).catch(e => {
+		console.log('error contacting github')
+		console.log(e)
+	})
+	
+	respondActions(res, actions.dailyReportAction(dailyReports))
+
 });
 
 app.post("/participants/:name/report/yesterday", (req, res, next) => {
@@ -116,16 +144,15 @@ app.post("/participants/:name/report/yesterday", (req, res, next) => {
 		return `${before}<strong><a href="${issue.url}" target="_blank">ISSUE #${issue.number.toString()}</strong> ( ${issue.title} )${after}`
 	}
 
-	report.yesterday = command.data;
 	octokit.issues
 		.listForRepo({ owner: "MRavimoF", repo: "dailier" })
 		.then(({ data }) => {
 			const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
 			const numbers = getNumbers(command.data)
 			const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
-			issues.forEach(i => {
-				report.yesterday = insertIssueLink(report.yesterday, i)
-			})
+			report.yesterday = issues.forEach(i => {
+				command.data = insertIssueLink(report.yesterday, i)
+			}) || command.data
 			respondActions(res, actions.ackAction());
 		})
 });
