@@ -1,8 +1,8 @@
 var actions = require("./actions");
 
 var express = require("express");
-const bodyParser = require('body-parser');
-const cors = require('cors')
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -10,16 +10,20 @@ var port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
+const Octokit = require("@octokit/rest");
+const octokit = new Octokit();
+
 var recording = [];
 var participants = [];
 
-const intro = 'Good day. My name is Lucy and I will be guiding you through your daily standup. Who is present?';
+const intro =
+	"Good day. My name is Lucy and I will be guiding you through your daily standup. Who is present?";
 
 app.post("/actions", (req, res, next) => {
 	const command = req.body;
 	console.log("Received request: " + JSON.stringify(req.body));
 
-	if(command.action === 'start') {
+	if (command.action === "start") {
 		recording = [];
 		participants = [];
 		respondActions(res, [
@@ -28,13 +32,11 @@ app.post("/actions", (req, res, next) => {
 		]);
 	}
 
-	if(command.action === 'dictate') {
+	if (command.action === "dictate") {
 		recording.push(command.payload);
 		res.json(actions.ackAction());
 	}
-
 });
-
 
 app.get("/transcript", (req, res, next) => {
 	const sentences = recording;
@@ -43,7 +45,14 @@ app.get("/transcript", (req, res, next) => {
 	});
 });
 
-app.post("/participants", (req, res, next) => { 
+app.get("/github-issues", (req, res, next) => {
+	octokit.issues.listForRepo({owner: 'MRavimoF', repo: 'dailier'})
+		.then(({ data }) => {
+			res.json(data.map((i) => ({number: i.number, title: i.title, url: i.url})));
+		});
+});
+
+app.post("/participants", (req, res, next) => {
 	const command = req.body;
 	const combined = participants.concat(command.data.split(" "));
 	participants = Array.from(new Set(combined));
@@ -57,7 +66,7 @@ app.get("/participants", (req, res, next) => {
 });
 
 app.listen(port, () => {
- console.log("Server running on port " + port);
+	console.log("Server running on port " + port);
 });
 
 function respondActions(res, actions) {
@@ -65,6 +74,3 @@ function respondActions(res, actions) {
 		actions: actions
 	});
 }
-
-
-

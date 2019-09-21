@@ -78,6 +78,15 @@ curl -X GET \
 	}'
 ```
 
+## Get github issues
+```
+curl -X GET \
+  https://dailier.herokuapp.com/github-issues \
+    -H 'Content-Type: application/json'
+```
+
+
+
 # The admin interface
 For debugging and administration there is a web interface for the system availabla at:
 https://quirky-meitner-255d4f.netlify.com/
