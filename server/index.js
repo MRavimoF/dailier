@@ -33,7 +33,7 @@ app.post("/actions", (req, res, next) => {
 		dailyReports = [];
 		respondActions(res, [
 			actions.sayAction(intro),
-			actions.recordAction("participants")
+			actions.recordAction("/participants")
 		]);
 	}
 

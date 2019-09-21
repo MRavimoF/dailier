@@ -27,7 +27,7 @@ def onBoxTalkEnd(name, completed):
     #    engine.endLoop()
 
 def talkToBrains(target, payload):
-    url = 'https://dailier.herokuapp.com/'+target
+    url = 'https://dailier.herokuapp.com'+target
     print('POST ' + url)
     response = requests.post(url, json = payload)
     print('Received response: ' + response.text)
