@@ -40,6 +40,27 @@ So this should be interpreted as follows on DailyBox:
 2. Start recording
 3. Send recorded text to endpoint `POST /participants` (determined by the original response)
 
+## Get the daily
+```
+curl -X GET \
+  https://dailier.herokuapp.com/daily \
+  -H 'Content-Type: application/json'
+```
+
+Response:
+```
+{
+    "report": [
+        {
+            "participant": "Mikko",
+            "yesterday": "Lots of hacking",
+            "today": null,
+            "blockers": null
+        }
+    ]
+}
+```
+
 ## Add participants
 ```
 curl -X POST \
@@ -57,25 +78,14 @@ curl -X GET \
   -H 'Content-Type: application/json'
 ```
  
-## Send text
+## Send yesterdays report for partipant
 ```
 curl -X POST \
-  https://dailier.herokuapp.com/actions \
+  http://localhost:3000/participants/Mikko/report/yesterday \
   -H 'Content-Type: application/json' \
   -d '{
-	"action": "dictate",
-	"payload": "I completed the Jira ticket 100"
+	"data": "Lots of hacking"
 }'
-```
-
-## Get whole transcript
-```
-curl -X GET \
-  https://dailier.herokuapp.com/transcript \
-    -H 'Content-Type: application/json' \
-      -d '{
-      	"action": "start"
-	}'
 ```
 
 # The admin interface
