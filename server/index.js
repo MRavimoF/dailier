@@ -16,7 +16,7 @@ var recording = [];
 var participants = [];
 
 const intro =
-	"Good day. My name is Lucy and I will be guiding you through your daily standup. Who is present?";
+	"Good day. My name is Lucy and I will be guiding you through your daily stand up. Who is present?";
 
 /**
  * Will be initialized with entry for each of the participant
@@ -70,6 +70,19 @@ app.get("/daily", (req, res, next) => {
 app.get("/github-issues", (req, res, next) => {
 });
 
+app.get("/whosturnisit", (req,res,next) => {
+	for (let i = 0; i < dailyReports.length; i++) {
+		const report = dailyReports[i];
+		if (!report.yesterday.text || !report.today.text || !report.blockers.text) {
+			res.json({
+				currentPerson: report.participant
+			});
+			return;
+		}
+	}
+
+	res.json({currentPerson: null});
+});
 
 app.post("/participants", (req, res, next) => {
 	const command = req.body;
@@ -126,7 +139,7 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	.listForRepo({ owner: "MRavimoF", repo: "dailier" })
 	.then(({ data }) => {
 		const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
-		const numbers = getNumbers(command.data)
+		const numbers = getNumbers(command.data.text)
 		const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
 		let tempStr = report[topic].text;
 		issues.forEach(i => {
@@ -139,12 +152,12 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 	})
 
 	const nextActions = actions.dailyReportAction(dailyReports);
-	if(actions)
+	if(nextActions)
 		respondActions(res, nextActions);
 	else {
 		// All good. Everyone accounted for.
 		dailyEnded = new Date();
-		respondActions(res, [actions.ackAction()])
+		respondActions(res, [actions.sayAction("Good job team! Keep up the good work and EBIT flowing. Let's do this again tomorrow. Make dailies great again. Go tell your friends.")]);
 	}
 });
 
