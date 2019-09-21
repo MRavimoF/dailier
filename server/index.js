@@ -73,7 +73,7 @@ app.get("/github-issues", (req, res, next) => {
 
 app.post("/participants", (req, res, next) => {
 	const command = req.body;
-	const newParticipants = command.data.trim()
+	const newParticipants = command.data.text.trim()
 		.split(" ")
 		.filter(it => it.trim().length != 0)
 	const combined = participants.concat(newParticipants);
