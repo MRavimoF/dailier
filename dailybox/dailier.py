@@ -38,6 +38,7 @@ def recordUntilKeyword(board):
     global loop
     print("START RECORDING")
     board.led.state = Led.BLINK
+    board.button.when_pressed = quitRecording
     collected = []
     loop = True
     while loop:
@@ -47,10 +48,11 @@ def recordUntilKeyword(board):
         else:
             print("You said: " + text)
             sanitized = text.lower()
-            loop = sanitized.find('peacock') == -1
+            if loop:
+                loop = sanitized.find('peacock') == -1
             collected.append(sanitized.replace('peacock',''))
-            board.button.when_pressed = quitRecording
     board.led.state = Led.OFF
+    board.button.when_pressed = None
     print("STOP RECORDING")
     return ' '.join(collected)
 
