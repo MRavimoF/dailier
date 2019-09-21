@@ -39,7 +39,7 @@ function dailyReportAction(reportByParticipant) {
       ];
   }
 
-  return ackAction();
+  return [ackAction()];
 }
 
 function action(type, callback, data) {
