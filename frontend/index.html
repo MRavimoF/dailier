@@ -47,9 +47,11 @@
 
 
 <script>
+
+	const reloadDelay = ;
 	setTimeout(function () {
 		update();
-	}, 200);
+	}, reloadDelay);
 
 	function update() {
 		getData("transcript", data => {
@@ -69,7 +71,7 @@
 		});
 		setTimeout(function () {
 			update();
-		}, 200);
+		}, reloadDelay);
 	}
 
 	function getData(resource, oncomplete) {
