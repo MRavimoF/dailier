@@ -28,6 +28,9 @@ const intro =
  */
 var dailyReports = [];
 
+var dailyStarted;
+var dailyEnded;
+
 app.post("/actions", (req, res, next) => {
 	const command = req.body;
 	console.log("Received request: " + JSON.stringify(req.body));
@@ -36,6 +39,7 @@ app.post("/actions", (req, res, next) => {
 		recording = [];
 		participants = [];
 		dailyReports = [];
+		dailyStarted = new Date();
 		respondActions(res, [
 			actions.sayAction(intro),
 			actions.recordAction("/participants")
@@ -56,7 +60,11 @@ app.get("/transcript", (req, res, next) => {
 });
 
 app.get("/daily", (req, res, next) => {
-	res.json({ report: dailyReports });
+	res.json({
+		dailyStarted: dailyStarted,
+		dailyEnded: dailyEnded,
+		report: dailyReports
+	});
 });
 
 app.get("/github-issues", (req, res, next) => {
@@ -102,7 +110,6 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 		dailyReports.push(report);
 	}
 
-
 	const insertIssueLink = (inputString, issue) => {
 		const textLoc = inputString.search(issue.number.toString())
 		const textLocEnd = textLoc + issue.number.toString().length
@@ -121,20 +128,25 @@ app.post("/participants/:name/report/:topic", (req, res, next) => {
 		const getNumbers = (inputString) => inputString.match(/\d+/g).map(Number)
 		const numbers = getNumbers(command.data)
 		const issues = data.map(i => ({ number: i.number, title: i.title, url: i.url })).filter(i => numbers.includes(i.number))
-		let tempStr = report[topic];
+		let tempStr = report[topic].text;
 		issues.forEach(i => {
 			tempStr = insertIssueLink(tempStr, i)
 		})
-		report[topic] = tempStr || command.data
+		report[topic].text = tempStr || command.data.text
 	}).catch(e => {
 		console.log('error contacting github')
 		console.log(e)
 	})
-	
-	respondActions(res, actions.dailyReportAction(dailyReports))
 
+	const nextActions = actions.dailyReportAction(dailyReports);
+	if(actions)
+		respondActions(res, nextActions);
+	else {
+		// All good. Everyone accounted for.
+		dailyEnded = new Date();
+		respondActions(res, [actions.ackAction()])
+	}
 });
-
 
 app.listen(port, () => {
 	console.log("Server running on port " + port);
@@ -155,8 +167,16 @@ function initializeReport(participants) {
 function emptyReport(name) {
 	return {
 		participant: name,
-		yesterday: null,
-		today: null,
-		blockers: null
+		yesterday: emptyTopic(),
+		today: emptyTopic(),
+		blockers: emptyTopic()
+	};
+}
+
+function emptyTopic() {
+	return {
+		text: null,
+		startAt: null,
+		endAt: null
 	};
 }

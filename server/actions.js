@@ -18,28 +18,26 @@ function ackAction() {
 function dailyReportAction(reportByParticipant) {
   for(let i = 0; i < reportByParticipant.length; i++){
     const report = reportByParticipant[i];
-    if(!report.yesterday)
+    if(!report.yesterday.text)
       return [
         sayAction(`So ${report.participant}, what did you do yesterday?`),
         recordAction(`/participants/${report.participant}/report/yesterday`)
       ];
 
-
-    if(!report.today)
+    if(!report.today.text)
       return [
         sayAction(`So ${report.participant}, what are you planning to do today?`),
         recordAction(`/participants/${report.participant}/report/today`)
       ];
 
-
-    if(!report.blockers)
+    if(!report.blockers.text)
       return [
         sayAction(`So ${report.participant}, do you have any blockers?`),
         recordAction(`/participants/${report.participant}/report/blockers`)
       ];
   }
 
-  return [ackAction()];
+  return null;
 }
 
 function action(type, callback, data) {
