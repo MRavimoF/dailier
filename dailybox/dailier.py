@@ -17,6 +17,7 @@ client = CloudSpeechClient()
 parser = argparse.ArgumentParser(description='Assistant service example.')
 parser.add_argument('--language', default=locale_language())
 args = parser.parse_args()
+loop = True
 
 def onBoxTalkStart(name):
     print ('intro', name)
@@ -47,10 +48,14 @@ def recordUntilKeyword(board):
             sanitized = text.lower()
             loop = sanitized.find('peacock') == -1
             collected.append(sanitized.replace('peacock',''))
-            #board.button.when_pressed = lambda loop: loop = False
+            board.button.when_pressed = quitRecording
     board.led.state = Led.OFF
     print("STOP RECORDING")
     return ' '.join(collected)
+
+def quitRecording():
+    print('quit recording loop')
+    loop = False
 
 def processActions(actions, board):
     for action in actions:
