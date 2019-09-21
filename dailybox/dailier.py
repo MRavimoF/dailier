@@ -59,6 +59,7 @@ def recordUntilKeyword(board):
 def quitRecording():
     global loop
     print('quit recording loop')
+    client.stop_listening()
     loop = False
 
 def processActions(actions, board):
